@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Clients{% endblock title %}
+
+{% block content %}
+{% if object_list.count  <= 0 %}
+<div class="d-flex flex-row"><a class="btn btn-info" type="button" href="{% url 'client_new' %}">Add client & cars
+    Info</a></div>
+{% else %}
+<p>Note : Below is the list of clients you have added.</p>
+{% endif %}
+{% for client in object_list %}
+<div class="card">
+    <div class="card-header">
+        <span class="font-weight-bold">{{ client.name }}</span>
+        <span class="font-weight-bold">cell: {{ client.cell_phone }} | </span>
+        <span class="font-weight-bold">acct: {{ client.acct_number }} | </span>
+
+        <span class="font-muted">addr: {{ client.address }} | </span>
+        <span class="font-muted-">city: {{ client.city }} | </span>
+        <span class="font-muted">st: {{ client.state }} | </span>
+        <span class="font-muted">zip: {{ client.zipcode }} | </span>
+        <span class="font-muted">email: {{ client.email }} | </span>
+    </div>
+    <div class="card-body">
+        <span class="font-weight-bold">Notes: </span>
+        <p>{{client.notes}}</p>
+        <p><a href="{% url 'client_edit' client.pk %}">Edit</a> | <a
+                href="{% url 'client_delete' client.pk %}">Delete</a></p>
+    </div>
+
+    <div class="card-footer">
+        <span class="font-weight-bold"> Vehicles  </span>
+        <table class="table">
+            <tr>
+                <th>Operations</th>
+                <th></th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>VIN</th>
+                <th>Date of Purchase</th>
+                <th>Date of last Service</th>
+            </tr>
+            {% for veh in client.vehicle.all %}
+            <tr>
+                <td><a href="{% url 'edit_vehicle' clientPk=client.pk pk=veh.pk %}">Edit</a></td>
+                <td><a href="{% url 'delete_vehicle' clientPk=client.pk pk=veh.pk %}">Delete</a></td>
+                <td>{{ veh.make }}</td>
+                <td>{{ veh.model }}</td>
+                <td>{{ veh.VIN }}</td>
+                <td>{{ veh.purchaseDate }}</td>
+                <td>{{ veh.lastServiceDate }}</td>
+            </tr>
+            {% endfor %}
+            <br/>
+            <a href="{% url 'add_vehicle' pk=client.pk %}">Add Vehicle</a>
+
+        </table>
+    </div>
+
+    <div class="card-footer">
+
+        <span class="font-weight-bold">Comments:</span>
+
+        {% for comment in client.comments.all %}
+        <p>
+            <a href="{% url 'edit_comment' clientPk=client.pk pk=comment.pk %}">Edit</a> |
+            <a href="{% url 'delete_comment' clientPk=client.pk pk=comment.pk %}">Delete</a>
+
+            <span class="font-weight-bold">{{ comment.author }} &middot;</span>
+            {{ comment }}
+        </p>
+        {% endfor %}
+
+        <a href="{% url 'add_comment' pk=client.pk %}">Add Comment</a>
+    </div>
+</div>
+<br/>
+
+{% endfor %}
+{% endblock content %}
